@@ -51,29 +51,30 @@ A full-stack application for managing employee data, built using the **MERN** st
     cd backend
     yarn install
 
-    ```bash
+3.  ```bash
     cd ../frontend
     yarn install
 
-3. **Setup Environment Variables**:
+4. **Setup Environment Variables**:
     Create a .env file in the config folder inside the backend folder with the following:
 
     PORT=8000
     MONGO_URI=your-mongodb-uri
     JWT_SECRET=your-jwt-secret
 
-4. **Start the development servers**:
+5. **Start the development servers**:
+
     Backend:
     ```bash
     cd backend
     yarn run dev
 
-    Frontend:
+6.  Frontend:
     ```bash
     cd ../frontend
     yarn start
 
-5. **Access the app**: Open your browser and navigate to http://localhost:3000
+7. **Access the app**: Open your browser and navigate to http://localhost:3000
 
 
 
