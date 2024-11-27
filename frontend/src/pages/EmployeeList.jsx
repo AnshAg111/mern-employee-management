@@ -167,7 +167,7 @@ const EmployeeList = () => {
                         <TableCell>{employee.phone}</TableCell>
                         <TableCell>{employee.designation}</TableCell>
                         <TableCell>{employee.gender}</TableCell>
-                        <TableCell>{employee.course}</TableCell>
+                        <TableCell>{Array.isArray(employee.course) ? employee.course.join(", ") : employee.course}</TableCell>
                         <TableCell>{format(new Date(employee.createDate), "PPP")}</TableCell>
                         <TableCell>
                         <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
@@ -232,7 +232,7 @@ const EmployeeList = () => {
             <strong>Gender:</strong> {modalData?.gender}
           </Typography>
           <Typography>
-            <strong>Course:</strong> {modalData?.course}
+            <strong>Course:</strong> {Array.isArray(modalData?.course) ? modalData?.course.join(", ") : modalData?.course}
           </Typography>
           <Typography>
             <strong>Date Created:</strong> {" "}

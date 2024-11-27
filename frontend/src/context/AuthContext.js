@@ -62,7 +62,7 @@ export const AuthContextProvider = ({ children }) => {
       if (!result.error) {
         localStorage.setItem("token", result.token);
         setUser(result.user);
-        toast.success(`Logged in ${result.user.name}`);
+        toast.success(`Logged in as ${result.user.username}`);
 
         navigate("/", { replace: true });
       } else {
