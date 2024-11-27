@@ -1,16 +1,19 @@
 require("dotenv").config({ path: "./config/config.env" });
 const express = require("express");
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 
 const connectDB = require("./config/db");
-
+const mongoose = require("mongoose");
 const auth = require("./middlewares/auth");
+
 
 const app = express();
 
 // middlewares
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(morgan("tiny"));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(require("cors")());
 
 // routes

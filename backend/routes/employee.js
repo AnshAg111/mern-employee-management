@@ -1,10 +1,13 @@
+const express = require("express");
 const { validateEmployee, Employee } = require("../models/Employee");
 const auth = require("../middlewares/auth");
-
+const { cloudinary, storage } = require("../config/CloudinaryConfig");
+const multer = require("multer");
 const mongoose = require("mongoose");
 const router = require("express").Router();
+const upload = multer({ storage });
 
-router.post("/employee", auth, async (req, res) => {
+router.post("/employee", auth, upload.single("image"), async (req, res) => {
   const { error } = validateEmployee(req.body);
 
   if (error) {
@@ -96,7 +99,7 @@ router.delete("/delete/:id", auth, async (req, res) => {
 
     return res
       .status(200)
-      .json({ ...contact._doc, Employees: Employees.reverse() });
+      .json({ ...employee._doc, Employees: Employees.reverse() });
   } catch (err) {
     console.log(err);
   }

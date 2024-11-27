@@ -28,8 +28,8 @@ const CreateEmployee = () => {
     phone: "",
     designation: "",
     gender: "",
-    course: "",
-    image:"",
+    course: [],
+    image:null,
   });
 
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ const CreateEmployee = () => {
     reader.onload = () => {
       setUserDetails((prevDetails) => ({
         ...prevDetails,
-        profileImage: reader.result, // Store base64 string
+        image: reader.result, // Store base64 string
       }));
     };
     reader.readAsDataURL(file);
@@ -87,6 +87,14 @@ const CreateEmployee = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // const formData = new FormData();
+    // formData.append("name", userDetails.name);
+    // formData.append("email", userDetails.email);
+    // formData.append("phone", userDetails.phone);
+    // formData.append("designation", userDetails.designation);
+    // formData.append("gender", userDetails.gender);
+    // formData.append("course", userDetails.course);
+    // formData.append("image", userDetails.image); 
     const res = await fetch(`http://localhost:8000/api/employee`, {
       method: "POST",
       headers: {
@@ -104,7 +112,7 @@ const CreateEmployee = () => {
         phone: "",
         designation: "",
         gender: "",
-        course: "",
+        course: [],
         image:"",
       });
       navigate("/employees");
@@ -121,8 +129,8 @@ const CreateEmployee = () => {
         </Typography>
       </Box>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
+        {/* <Grid container spacing={2}> */}
+          <Grid item xs={12} padding={2}>
             <InputLabel id="namelabel">Name:</InputLabel>
             <TextField
               id="name"
@@ -136,8 +144,8 @@ const CreateEmployee = () => {
             />
           </Grid>
 
-          <Grid item xs={12}>
-            <InputLabel id="email">Email:</InputLabel>
+          <Grid item xs={12} padding={2}>
+            <InputLabel id="emaillabel">Email:</InputLabel>
             <TextField
               id="email"
               name="email"
@@ -150,7 +158,7 @@ const CreateEmployee = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} padding={2}>
             <InputLabel id="phonelabel">Mobile No.:</InputLabel>
             <TextField
               id="phone"
@@ -164,7 +172,7 @@ const CreateEmployee = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} padding={2}>
             <InputLabel id="designation">Designation:</InputLabel>
             <Select
               name="designation"
@@ -176,18 +184,19 @@ const CreateEmployee = () => {
               <MenuItem value="Sales">Sales</MenuItem>
             </Select>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} padding={2}>
             <InputLabel id="gender">Gender</InputLabel>
             <RadioGroup
               name="gender"
               value={userDetails.gender}
               onChange={handleInputChange}
+              row
             >
               <FormControlLabel value="Female" control={<Radio />} label="F" />
               <FormControlLabel value="Male" control={<Radio />} label="M" />
             </RadioGroup>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} padding={2}>
             <InputLabel id="Checkbox">Course</InputLabel>
             <FormControlLabel
               control={
@@ -223,8 +232,10 @@ const CreateEmployee = () => {
               label="BSC"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} padding={2}>
+          <InputLabel id="image">Upload Image </InputLabel>
             <input
+              // label="Upload Image"
               accept="image/jpeg, image/png" // Limit accepted file types
               style={{ display: "none" }} // Hide the input element
               id="upload-image"
@@ -237,12 +248,13 @@ const CreateEmployee = () => {
                 component="span"
                 startIcon={<UploadFileIcon />}
               >
-                Upload Image
+                Select File 
               </Button>
             </label>
           </Grid>
 
-          <Grid item xs={12} sx={{ textAlign: "center" }}>
+        {/* </Grid> */}
+          <Grid item xs={12} padding={2} sx={{ textAlign: "center" }}>
             <Button
               type="submit"
               variant="contained"
@@ -253,7 +265,6 @@ const CreateEmployee = () => {
               Submit
             </Button>
           </Grid>
-        </Grid>
       </form>
     </Container>
   );

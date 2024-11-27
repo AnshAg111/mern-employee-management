@@ -33,9 +33,10 @@ const EmployeeList = () => {
     const fetchEmployeesData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/api/employeelist`, {
+        const res = await fetch(`http://localhost:8000/api/employees`, {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
@@ -63,11 +64,11 @@ const EmployeeList = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+        setShowModal(false);
         const result = await res.json();
         if (!result.error) {
-          setEmployees(result.myEmployees);
+          setEmployees(result.Employees);
           toast.success("Removed Employee");
-          setShowModal(false);
         } else {
           toast.error(result.error);
         }
@@ -172,7 +173,7 @@ const EmployeeList = () => {
                         <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
                             <Button
                               component={Link}
-                              to={`/edit/${modalData._id}`}
+                              to={`/edit/${employee?._id}`}
                               variant="contained"
                               color="info"
                             >
@@ -181,7 +182,7 @@ const EmployeeList = () => {
                             <Button
                               variant="contained"
                               color="error"
-                              onClick={() => deleteEmployee(modalData._id)}
+                              onClick={() => deleteEmployee(employee?._id)}
                             >
                               Delete
                             </Button>
@@ -197,7 +198,7 @@ const EmployeeList = () => {
         </>
       )}
 
-      <Modal
+      {showModal && <Modal
         open={showModal}
         onClose={() => setShowModal(false)}
         aria-labelledby="employee-modal-title"
@@ -216,26 +217,26 @@ const EmployeeList = () => {
           }}
         >
           <Typography id="employee-modal-title" variant="h6" component="h2" gutterBottom>
-            {modalData.name} 
+            {modalData?.name} 
           </Typography>
           <Typography>
-            <strong>Email:</strong> {modalData.email}
+            <strong>Email:</strong> {modalData?.email}
           </Typography>
           <Typography>
-            <strong>Mobile No.:</strong> {modalData.phone}
+            <strong>Mobile No.:</strong> {modalData?.phone}
           </Typography>
           <Typography>
-            <strong>Designation:</strong> {modalData.designation}
+            <strong>Designation:</strong> {modalData?.designation}
           </Typography>
           <Typography>
-            <strong>Gender:</strong> {modalData.gender}
+            <strong>Gender:</strong> {modalData?.gender}
           </Typography>
           <Typography>
-            <strong>Course:</strong> {modalData.course}
+            <strong>Course:</strong> {modalData?.course}
           </Typography>
           <Typography>
             <strong>Date Created:</strong> {" "}
-            {format(new Date(modalData.createDate), "PPP")}
+            {format(new Date(modalData?.createDate), "PPP")}
           </Typography>
           <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
           <Button variant="outlined" color="warning" onClick={() => setShowModal(false)}>
@@ -244,7 +245,7 @@ const EmployeeList = () => {
             </Box>
           
         </Box>
-      </Modal>
+      </Modal>}
     </Container>
   );
 };

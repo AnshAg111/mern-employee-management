@@ -10,10 +10,10 @@ import {
   Box,
   Container,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import Grid from '@mui/material/Grid2';
+import Grid from "@mui/material/Grid2";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormLabel from "@mui/material/FormLabel";
@@ -34,20 +34,36 @@ const EditEmployee = () => {
     phone: "",
     designation: "",
     gender: "",
-    course: "",
+    course: [],
+    image: null,
   });
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setUserDetails({ ...userDetails, [name]: value });
+    const { name, value, type, checked } = event.target;
+
+    // Handle Checkboxes (for multiple selections like courses)
+    if (type === "checkbox") {
+      setUserDetails((prevDetails) => ({
+        ...prevDetails,
+        [name]: prevDetails[name]
+          ? prevDetails[name].includes(value)
+            ? prevDetails[name].filter((item) => item !== value) // Remove if already selected
+            : [...prevDetails[name], value] // Add if not already selected
+          : [value], // Initialize as an array if not already set
+      }));
+    } else {
+      // Handle Select, Text, and Radio inputs
+      setUserDetails({ ...userDetails, [name]: value });
+    }
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (!(file && (file.type === "image/jpeg" || file.type === "image/png"))) {
-      // onFileSelect(file);
-      alert("Only JPG or PNG files are allowed.");
-    } 
+    if (file) {
+      setUserDetails({ ...userDetails, image: file });
+    } else {
+      alert("Please upload the image.");
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -64,9 +80,8 @@ const EditEmployee = () => {
 
     const result = await res.json();
     if (!result.error) {
-      toast.success(
-        `Updated [${userDetails.name} employee`
-      );
+      toast.success(`Updated [${userDetails.name} successfully!`);
+      // navigate("/employees");
 
       setUserDetails({
         name: "",
@@ -74,7 +89,8 @@ const EditEmployee = () => {
         phone: "",
         designation: "",
         gender: "",
-        course: "",
+        course: [],
+        image: "",
       });
       navigate("/employees");
     } else {
@@ -100,10 +116,11 @@ const EditEmployee = () => {
           designation: result.designation,
           gender: result.gender,
           course: result.course,
+          image: null,
         });
-        setLoading(false);
       } catch (err) {
         console.log(err);
+      } finally {
         setLoading(false);
       }
     };
@@ -118,13 +135,14 @@ const EditEmployee = () => {
       ) : (
         <>
           <Typography variant="h4" gutterBottom>
-            Employee Edit 
+            Employee Edit
           </Typography>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-              <InputLabel id="namelabel">Name:</InputLabel>
+            {/* <Grid container spacing={2}> */}
+              <Grid item xs={12} padding={2}>
+                <InputLabel id="namelabel">Name:</InputLabel>
                 <TextField
+                  id="name"
                   fullWidth
                   name="name"
                   value={userDetails.name}
@@ -133,11 +151,12 @@ const EditEmployee = () => {
                   required
                 />
               </Grid>
-              
-              <Grid item xs={12}>
-              <InputLabel id="email">Email:</InputLabel>
+
+              <Grid item xs={12} padding={2}>
+                <InputLabel id="emaillabel">Email:</InputLabel>
                 <TextField
                   fullWidth
+                  id="email"
                   name="email"
                   type="email"
                   value={userDetails.email}
@@ -146,10 +165,11 @@ const EditEmployee = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
-              <InputLabel id="phonelabel">Mobile No.:</InputLabel>
+              <Grid item xs={12} padding={2}>
+                <InputLabel id="phonelabel">Mobile No.:</InputLabel>
                 <TextField
                   fullWidth
+                  id="phone"
                   name="phone"
                   type="tel"
                   value={userDetails.phone}
@@ -158,83 +178,106 @@ const EditEmployee = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
-            <InputLabel id="designation">Designation:</InputLabel>
-            <Select
-              value={userDetails.designation}
-              label="Select"
-              onChange={handleInputChange}
-            >
-              <MenuItem value="HR">HR</MenuItem>
-              <MenuItem value="Manager">Manager</MenuItem>
-              <MenuItem value="Sales">Sales</MenuItem>
-            </Select>
-          </Grid>
-          <Grid item xs={12}>
-            <InputLabel id="demo-radio-buttons-group-label">Gender</InputLabel>
-            <RadioGroup
-              aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue="female"
-              name="radio-buttons-group"
-            >
-              <FormControlLabel
-                value={userDetails.gender}
-                control={<Radio />}
-                label="F"
-              />
-              <FormControlLabel
-                value={userDetails.gender}
-                control={<Radio />}
-                label="M"
-              />
-              {/* <FormControlLabel value="other" control={<Radio />} label="Other" /> */}
-            </RadioGroup>
-          </Grid>
-          <Grid item xs={12}>
-            <InputLabel id="Checkbox">Course</InputLabel>
-            <FormControlLabel
-              value={userDetails.course}
-              control={<Checkbox />}
-              label="MCA"
-            />
-            <FormControlLabel
-              value={userDetails.course}
-              control={<Checkbox />}
-              label="BCA"
-            />
-            <FormControlLabel
-              value={userDetails.course}
-              control={<Checkbox />}
-              label="BSC"
-            />
-          </Grid>
-          {/* <Grid>
-            <input
-              accept="image/jpeg, image/png"
-              style={{ display: "none" }}
-              id="upload-image"
-              type="file"
-              onChange={handleFileChange}
-            />
-            <label htmlFor="upload-image">
-              <Button
-                variant="contained"
-                component="span"
-                startIcon={<UploadFileIcon />}
-              >
-                Upload Image
-              </Button>
-            </label>
-          </Grid> */}
-            </Grid>
-            <Box sx={{ mt: 3 }}>
+
+              <Grid item xs={12} padding={2}>
+                <InputLabel id="designation">Designation:</InputLabel>
+                <Select
+                  name="designation"
+                  value={userDetails.designation}
+                  label="Select"
+                  onChange={handleInputChange}
+                >
+                  <MenuItem value="HR">HR</MenuItem>
+                  <MenuItem value="Manager">Manager</MenuItem>
+                  <MenuItem value="Sales">Sales</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={12} padding={2}>
+                <InputLabel id="gender">Gender</InputLabel>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  name="gender"
+                  value={userDetails.gender}
+                  onChange={handleInputChange}
+                  row 
+                >
+                  <FormControlLabel
+                    value="Female"
+                    control={<Radio />}
+                    label="F"
+                  />
+                  <FormControlLabel
+                    value="Male"
+                    control={<Radio />}
+                    label="M"
+                  />
+                  {/* <FormControlLabel value="other" control={<Radio />} label="Other" /> */}
+                </RadioGroup>
+              </Grid>
+              <Grid item xs={12} padding={2}>
+                <InputLabel id="Checkbox">Course</InputLabel>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="course"
+                      value="MCA"
+                      onChange={handleInputChange}
+                      checked={userDetails.course?.includes("MCA") || false}
+                    />
+                  }
+                  label="MCA"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="course"
+                      value="BCA"
+                      onChange={handleInputChange}
+                      checked={userDetails.course?.includes("BCA") || false}
+                    />
+                  }
+                  label="BCA"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="course"
+                      value="BSC"
+                      onChange={handleInputChange}
+                      checked={userDetails.course?.includes("BSC") || false}
+                    />
+                  }
+                  label="BSC"
+                />
+              </Grid>
+              <Grid item xs={12} padding={2}>
+                <input
+                  label="Upload Image"
+                  accept="image/jpeg, image/png" // Limit accepted file types
+                  style={{ display: "none" }} // Hide the input element
+                  id="upload-image"
+                  type="file"
+                  onChange={handleFileChange} // Handle file changes
+                />
+                <label htmlFor="upload-image">
+                  <Button
+                    variant="contained"
+                    component="span"
+                    startIcon={<UploadFileIcon />}
+                  >
+                    Select File 
+                  </Button>
+                </label>
+              </Grid>
+            {/* </Grid> */}
+            <Box sx={{ mt: 3 }} padding={2}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
               >
-                Update 
+                Update
               </Button>
             </Box>
           </form>

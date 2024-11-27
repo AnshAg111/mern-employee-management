@@ -24,7 +24,7 @@ const EmployeeSchema = new mongoose.Schema({
     required:[true, "gender required."],
   },
   course:{
-    type: String,
+    type: [String],
     required:[true, "what is your course?"],
   },
   createDate:{
@@ -32,7 +32,7 @@ const EmployeeSchema = new mongoose.Schema({
     default: Date.now,
     required:[true, "Date created"],
   },
-  Image: {
+  image: {
     type: String, // Store the base64 string or a URL
     required: true,
   },
@@ -46,7 +46,7 @@ const Employee = new mongoose.model("Employee", EmployeeSchema);
 
 const validateEmployee = (data) => {
   const schema = Joi.object({
-    name: Joi.string().min(4).max(50).required(),
+    name: Joi.string().min(1).max(50).required(),
     // address: Joi.string().min(4).max(100).required(),
     email: Joi.string().email().required(),
     phone: Joi.string()
@@ -54,11 +54,8 @@ const validateEmployee = (data) => {
       .required(),
     designation: Joi.string().required(),
     gender: Joi.string().required(),                 
-    course: Joi.string().required(),
-    createDate: Joi.date()
-      .iso() // Ensures the date follows ISO 8601 format.
-      .required(),
-      Image: Joi.string().uri().required(),
+    course: Joi.array().required(),
+    image: Joi.string().uri().required(),
   });
 
   return schema.validate(data);
